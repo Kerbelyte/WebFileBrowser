@@ -1,0 +1,29 @@
+body {
+    display: grid;
+    grid-template-columns: 1fr;
+    font-family: Sans-serif;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.column_names {
+    background-color: rgba(58, 148, 207, 0.781);
+    text-align-last: center;
+    color: white;
+    font-size: large;
+    font-weight: bold;
+}
+
+td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.back_button {
+    padding: 5px 30px;
+    cursor: pointer;
+}
