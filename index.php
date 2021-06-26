@@ -7,23 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FileBrowser</title>
     <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
-
     <div class="browser_table">
         <?php
-        $rootDir = '/Applications/XAMPP/xamppfiles/htdocs';
+        $rootDir = '/Applications/XAMPP/xamppfiles/htdocs/';
         $diff = '';
         if (!empty($_GET['path'])) {
-            $currentPath = $rootDir . '/' . $_GET['path'];
+            $currentPath = $rootDir . $_GET['path'];
             $diff = str_replace($rootDir, '', $currentPath);
-            echo '<h1>Directory contents: ' . "$diff" . '</h1>';
         } else {
             $currentPath = $rootDir;
-            echo '<h1>Directory contents: ' . "$currentPath" . '</h1>';
+            $diff = '/';
         }
+        echo "<h1>Directory contents: $diff</h1>";
+
         $files = array_slice(scandir($currentPath), 2);
 
         echo '<table>
@@ -34,9 +32,16 @@
             </tr>';
         for ($i = 1; $i < count($files); $i++) {
             $name = $files[$i];
-            if (is_dir($rootDir . $diff . '/' . $name)) {
+            if (is_dir($rootDir .$diff .'/' . $name)) {
+                if ($diff === '/') {
+                    $noWhiteSpaceURL = urlencode($diff . $name);
+                } else {
+                    $noWhiteSpaceURL = urlencode($diff . '/' . $name);
+                }
+                
                 $type = 'Directory';
-                $name = "<a href=\"index.php?path=$diff/$files[$i]\">$name</a>";
+                $name = "<a href=\"index.php?path=$noWhiteSpaceURL\">$name</a>";
+            // var_dump($noWhiteSpaceURL);
             } else {
                 $type = 'File';
                 $name;
@@ -47,13 +52,11 @@
                         <td>' . '#' . '</td>
                     </tr>';
         }
-
         echo '</table>';
-
-
-
+        if($rootDir != $currentPath){
+        echo '<button class="back_button" href="#" onclick="history.go(-1);">Back</button>';
+        }
         ?>
-        <button class="back_button" href="#" onclick="history.go(-1);">Back</button>
     </div>
 </body>
 
