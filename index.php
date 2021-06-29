@@ -63,7 +63,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
             $file_type = $_FILES['image']['type'];
 
             // check extension (and only permit jpegs, jpgs and pngs)
-            $file_ext = strtolower(end(explode('.', $_FILES['image']['name']))); // telia_bill.PDF --> 'telia_bill', 'PDF' --> 'pdf'
+            $explode = explode('.', $_FILES['image']['name']);
+            $end = end($explode);
+            $file_ext = strtolower($end); // telia_bill.PDF --> 'telia_bill', 'PDF' --> 'pdf'
+
             $extensions = array("jpeg", "jpg", "png");
             if (in_array($file_ext, $extensions) === false) {
                 $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
@@ -72,7 +75,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
                 $errors[] = 'File size must be excately 2 MB';
             }
             if (empty($errors) == true) {
-                move_uploaded_file($file_tmp, "./" . $path . $file_name);
+                move_uploaded_file($file_tmp, "./" . $diff . '/' .$file_name);
                 echo "Success";
             } else {
                 print_r($errors);
