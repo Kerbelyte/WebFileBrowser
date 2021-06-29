@@ -23,6 +23,23 @@ td {
     padding: 8px;
 }
 
+.form {
+    text-align: center;
+    padding: 8px 15px;
+    margin: 10px 70px 10px 70px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.logout {
+    text-align: center;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+}
+
 .back_button {
     padding: 5px 30px;
     cursor: pointer;

@@ -14,11 +14,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FileBrowser</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <div class="browser_table">
+    <div class="container">
         <?php
         $rootDir = __DIR__;
         $diff = '';
@@ -44,10 +45,62 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
             echo $message;
         }
 
-        echo "<h1>Directory contents: $diff</h1>";
+        // file delete logic
+        if (isset($_POST['delete'])) {
+            if (empty($_GET['path'])) {
+                unlink($_POST['delete']);
+            } else {
+                unlink($currentPath . '/' . $_POST['delete']);
+            }
+        }
+        // file upload logic
+        if (isset($_FILES['image'])) {
+            $errors = array();
 
+            $file_name = $_FILES['image']['name'];
+            $file_size = $_FILES['image']['size'];
+            $file_tmp = $_FILES['image']['tmp_name'];
+            $file_type = $_FILES['image']['type'];
+
+            // check extension (and only permit jpegs, jpgs and pngs)
+            $file_ext = strtolower(end(explode('.', $_FILES['image']['name']))); // telia_bill.PDF --> 'telia_bill', 'PDF' --> 'pdf'
+            $extensions = array("jpeg", "jpg", "png");
+            if (in_array($file_ext, $extensions) === false) {
+                $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
+            }
+            if ($file_size > 2097152) {
+                $errors[] = 'File size must be excately 2 MB';
+            }
+            if (empty($errors) == true) {
+                move_uploaded_file($file_tmp, "./" . $path . $file_name);
+                echo "Success";
+            } else {
+                print_r($errors);
+            }
+        }
+        // file download logic
+        if (isset($_POST['download'])) {
+            $file = './' . $_POST['download'];
+            $fileToDownloadEscaped = $file;
+            ob_clean();
+            ob_start();
+            header('Content-Description: File Transfer');
+            header('Content-Type: application/pdf');
+            header('Content-Disposition: attachment; filename=' . basename($fileToDownloadEscaped));
+            header('Content-Transfer-Encoding: binary');
+            header('Expires: 0');
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+            header('Content-Length: ' . filesize($fileToDownloadEscaped));
+            ob_end_flush();
+
+            readfile($fileToDownloadEscaped);
+            exit;
+        }
+
+        echo "<h1>Directory contents: $diff</h1>";
         $files = array_slice(scandir($currentPath), 2);
-        echo '<table>
+        echo '<table class="table table-striped">
                 <tr class="column_names">
                     <td>Type</td>
                     <td>Name</td>
@@ -63,14 +116,20 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
                 }
                 $type = 'Directory';
                 $name = "<a href=\"index.php?path=$noWhiteSpaceURL\">$name</a>";
+                $actions = '';
             } else {
                 $type = 'File';
-                $name;
+                $actions = '<form method="POST">
+                                <button type="submit" class="btn-delete" name="delete" value="' . $name . '">Delete</button>
+                            </form>
+                            <form action="" method="POST">
+                                <button type="submit" class="btn-download" name="download" value="' . $name . '">Download</button>
+                            </form>';
             }
             echo '<tr>
                         <td>' . $type . '</td>
                         <td>' . $name . '</td>
-                        <td>' . '#' . '</td>
+                        <td>' . $actions . '</td>
                     </tr>';
         }
         echo '</table>';
@@ -79,19 +138,34 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
             if (dirname($diff) == '/') {
                 $urlBack = '';
             }
-            echo '<a class="back_button" href="index.php' . $urlBack . '">Back</a>';
+            echo '<button><a class="back_button" href="index.php' . $urlBack . '">Back</a></button>';
         }
         ?>
     </div>
-    <form method="post">
-        <div>
+
+    <!-- new directory -->
+    <div class="form">
+        <form method="POST">
             <label>Create a new directory</label>
             <input type="text" name="directoryName" placeholder="Enter directory name" />
             <button type="submit" name="submit">Submit</button>
-        </div>
+        </form>
+    </div>
+
+    <!-- upload files -->
+    <div class="form">
+    <form action="" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" />
+        <input type="submit" />
     </form>
-    <div>
-        Click here to <a href="auth.php?action=logout"> logout.
+    <!-- <ul>
+        <li>Sent file: <?php echo $_FILES['image']['name'];  ?>
+        <li>File size: <?php echo $_FILES['image']['size'];  ?>
+        <li>File type: <?php echo $_FILES['image']['type']   ?>
+    </ul> -->
+    </div>
+    <div class="logout">
+        Click here to <a href="auth.php?action=logout"> logout
     </div>
 </body>
 
