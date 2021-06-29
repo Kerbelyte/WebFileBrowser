@@ -49,8 +49,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
         if (isset($_POST['delete'])) {
             if (empty($_GET['path'])) {
                 unlink($_POST['delete']);
+                echo 'File deleted!';
             } else {
                 unlink($currentPath . '/' . $_POST['delete']);
+                echo 'File deleted!';
             }
         }
         // file upload logic
@@ -65,25 +67,25 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
             // check extension (and only permit jpegs, jpgs and pngs)
             $explode = explode('.', $_FILES['image']['name']);
             $end = end($explode);
-            $file_ext = strtolower($end); // telia_bill.PDF --> 'telia_bill', 'PDF' --> 'pdf'
+            $file_ext = strtolower($end);
 
             $extensions = array("jpeg", "jpg", "png");
             if (in_array($file_ext, $extensions) === false) {
                 $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
             }
             if ($file_size > 2097152) {
-                $errors[] = 'File size must be excately 2 MB';
+                $errors[] = 'File size must be exactly 2 MB';
             }
             if (empty($errors) == true) {
-                move_uploaded_file($file_tmp, "./" . $diff . '/' .$file_name);
+                move_uploaded_file($file_tmp, './' . $diff . '/' .$file_name);
                 echo "Success";
             } else {
-                print_r($errors);
+                echo 'extension not allowed, please choose a JPEG or PNG file.';
             }
         }
         // file download logic
         if (isset($_POST['download'])) {
-            $file = './' . $_POST['download'];
+            $file = $currentPath . '/'. $_POST['download'];
             $fileToDownloadEscaped = $file;
             ob_clean();
             ob_start();
