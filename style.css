@@ -9,10 +9,9 @@ table {
     width: 100%;
 }
 
-.column_names {
+.column-names {
     background-color: rgba(58, 148, 207, 0.781);
     text-align-last: center;
-    color: white;
     font-size: large;
     font-weight: bold;
 }
@@ -26,11 +25,12 @@ td {
 .form {
     text-align: center;
     padding: 8px 15px;
-    margin: 10px 70px 10px 70px;
+    margin: auto;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    width: 50%;
 }
 
 .logout {
@@ -43,4 +43,16 @@ td {
 .back_button {
     padding: 5px 30px;
     cursor: pointer;
+}
+
+.action-form {
+    display: inline-block;
+}
+
+.action-buttons {
+    text-align: center;
+}
+
+.middle-column {
+    width: 60%;
 }

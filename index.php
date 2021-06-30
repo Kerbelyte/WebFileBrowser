@@ -47,14 +47,19 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
 
         // file delete logic
         if (isset($_POST['delete'])) {
-            if (empty($_GET['path'])) {
-                unlink($_POST['delete']);
-                echo 'File deleted!';
-            } else {
-                unlink($currentPath . '/' . $_POST['delete']);
-                echo 'File deleted!';
-            }
+            $ext = pathinfo($_POST['delete'], PATHINFO_EXTENSION);
+            $protectExtensions = array("php", "css");
+            if (in_array($ext, $protectExtensions) === false) {
+                if (empty($_GET['path'])) {
+                    unlink($_POST['delete']);
+                    echo 'File deleted!';
+                } else {
+                    unlink($currentPath . '/' . $_POST['delete']);
+                    echo 'File deleted!';
+                }
+            }    
         }
+
         // file upload logic
         if (isset($_FILES['image'])) {
             $errors = array();
@@ -77,15 +82,16 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
                 $errors[] = 'File size must be exactly 2 MB';
             }
             if (empty($errors) == true) {
-                move_uploaded_file($file_tmp, './' . $diff . '/' .$file_name);
+                move_uploaded_file($file_tmp, './' . $diff . '/' . $file_name);
                 echo "Success";
             } else {
                 echo 'extension not allowed, please choose a JPEG or PNG file.';
             }
         }
+
         // file download logic
         if (isset($_POST['download'])) {
-            $file = $currentPath . '/'. $_POST['download'];
+            $file = $currentPath . '/' . $_POST['download'];
             $fileToDownloadEscaped = $file;
             ob_clean();
             ob_start();
@@ -102,11 +108,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
             readfile($fileToDownloadEscaped);
             exit;
         }
-
+        
+        // HTML
         echo "<h1>Directory contents: $diff</h1>";
         $files = array_slice(scandir($currentPath), 2);
         echo '<table class="table table-striped">
-                <tr class="column_names">
+                <tr class="column-names">
                     <td>Type</td>
                     <td>Name</td>
                     <td>Actions</td>
@@ -123,19 +130,26 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
                 $name = "<a href=\"index.php?path=$noWhiteSpaceURL\">$name</a>";
                 $actions = '';
             } else {
+                $extension = pathinfo($name, PATHINFO_EXTENSION);
                 $type = 'File';
-                $actions = '<form method="POST">
-                                <button type="submit" class="btn-delete" name="delete" value="' . $name . '">Delete</button>
-                            </form>
-                            <form action="" method="POST">
-                                <button type="submit" class="btn-download" name="download" value="' . $name . '">Download</button>
+                $actions = '';
+                $protectExtensions = array("php", "css");
+               if (in_array($extension, $protectExtensions) === false) {
+                    $actions .= '<form class="action-form" method="POST">
+                                    <button type="submit" class="btn_delete" name="delete" value="' . $name . '">Delete</button>
+                                </form>';
+               }
+
+                $actions .= '
+                            <form class="action-form" action="" method="POST">
+                                <button type="submit" class="btn_download" name="download" value="' . $name . '">Download</button>
                             </form>';
             }
             echo '<tr>
-                        <td>' . $type . '</td>
-                        <td>' . $name . '</td>
-                        <td>' . $actions . '</td>
-                    </tr>';
+                    <td>' . $type . '</td>
+                    <td class="middle-column">' . $name . '</td>
+                    <td class="action-buttons">' . $actions . '</td>
+                  </tr>';
         }
         echo '</table>';
         if ($rootDir != $currentPath) {
@@ -159,11 +173,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
 
     <!-- upload files -->
     <div class="form">
-    <form action="" method="POST" enctype="multipart/form-data">
-        <input type="file" name="image" />
-        <input type="submit" />
-    </form>
-    <!-- <ul>
+        <form action="" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" id="img" style="display:none;" />
+            <button style="display: block; width: 100%" type="button">
+                <label for="img" style="display: block; cursor: pointer; width: 100%">Choose file</label>
+            </button>
+            <button <input style="display: block; width: 100%" type="submit" />Upload file</button>
+        </form>
+        <!-- <ul>
         <li>Sent file: <?php echo $_FILES['image']['name'];  ?>
         <li>File size: <?php echo $_FILES['image']['size'];  ?>
         <li>File type: <?php echo $_FILES['image']['type']   ?>
