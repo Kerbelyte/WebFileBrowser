@@ -18,4 +18,4 @@ This is my first project built with PHP!
 * Login with provided information in the form placeholders
 
 ## Author
-[Dovilė Kerbelytė](https://github.com/Kerbelyte)
+Dovilė [Github](https://github.com/Kerbelyte) , [LinkedIn](https://linkedin.com/in/dovilė-kerbelytė-66634a162)
