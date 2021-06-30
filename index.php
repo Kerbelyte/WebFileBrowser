@@ -14,8 +14,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FileBrowser</title>
+    <link rel="stylesheet" href="./css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
@@ -33,10 +34,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
 
         // directory creation logic
         if (isset($_POST['submit'])) {
-            $directoryName = $_POST["directoryName"];
+            $directoryName = $_POST['directoryName'];
             if (is_dir($rootDir . (isset($_GET['path']) ? $_GET['path'] : '') . '/' . $directoryName)) {
                 $message = 'Directory ' . $directoryName . ' already exists!';
-            } else if ($directoryName == "") {
+            } else if ($directoryName == '') {
                 $message = 'Enter name for new directory!';
             } else {
                 mkdir($currentPath . '/' . $directoryName);
@@ -48,7 +49,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
         // file delete logic
         if (isset($_POST['delete'])) {
             $ext = pathinfo($_POST['delete'], PATHINFO_EXTENSION);
-            $protectExtensions = array("php", "css");
+            $protectExtensions = array('php', 'css', 'md');
             if (in_array($ext, $protectExtensions) === false) {
                 if (empty($_GET['path'])) {
                     unlink($_POST['delete']);
@@ -74,16 +75,16 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
             $end = end($explode);
             $file_ext = strtolower($end);
 
-            $extensions = array("jpeg", "jpg", "png");
+            $extensions = array('jpeg', 'jpg', 'png');
             if (in_array($file_ext, $extensions) === false) {
-                $errors[] = "extension not allowed, please choose a JPEG or PNG file.";
+                $errors[] = 'extension not allowed, please choose a JPEG or PNG file.';
             }
             if ($file_size > 2097152) {
                 $errors[] = 'File size must be exactly 2 MB';
             }
             if (empty($errors) == true) {
                 move_uploaded_file($file_tmp, './' . $diff . '/' . $file_name);
-                echo "Success";
+                echo 'Success';
             } else {
                 echo 'extension not allowed, please choose a JPEG or PNG file.';
             }
@@ -133,16 +134,20 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] == false) {
                 $extension = pathinfo($name, PATHINFO_EXTENSION);
                 $type = 'File';
                 $actions = '';
-                $protectExtensions = array("php", "css");
+                $protectExtensions = array('php', 'css', 'md');
                if (in_array($extension, $protectExtensions) === false) {
                     $actions .= '<form class="action-form" method="POST">
-                                    <button type="submit" class="btn_delete" name="delete" value="' . $name . '">Delete</button>
+                                    <button type="submit" class="btn_delete" name="delete" value="' . $name . '">
+                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </button>
                                 </form>';
                }
 
                 $actions .= '
                             <form class="action-form" action="" method="POST">
-                                <button type="submit" class="btn_download" name="download" value="' . $name . '">Download</button>
+                                <button type="submit" class="btn_download" name="download" value="' . $name . '">
+                                <i class="fa fa-download" aria-hidden="true"></i>
+                                </button>
                             </form>';
             }
             echo '<tr>

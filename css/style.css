@@ -4,6 +4,11 @@ body {
     font-family: Sans-serif;
 }
 
+h1 {
+    padding-bottom: 20px;
+    padding-top: 10px;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
@@ -54,5 +59,5 @@ td {
 }
 
 .middle-column {
-    width: 60%;
+    width: 70%;
 }
