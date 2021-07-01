@@ -14,7 +14,7 @@ This is my first project built with PHP!
 ## Installation
 
 * Clone the repository
-* Open the path where you can launch php interpreter, e.g. http//localhost/browser
+* Open the path where you can launch php interpreter, e.g. http://localhost/browser/index.php
 * Login with provided information in the form placeholders
 
 ## Author
